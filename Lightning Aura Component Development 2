@@ -1,1 +1,52 @@
+1. firstAuraComponent :  
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="var1" type="String" default = "Test Value" />
+    <h1>Component Attribute's Value : {!v.var1}</h1>
+</aura:component>
+
+
+2. SecondAuraComponet : 
+
+
+<aura:component >
+    <aura:attribute name="Message1" type="String" default="Test Value1" />
+    
+    Hello : {!v.Message1}
+    <br></br>
+    <br />
+    <lightning:button label="First Button" onclick="{!c.handleClick}" />
+    <br />
+    <br />
+    <hr />
+    <aura:attribute name="Message2" type="String" default="Test Value2" />
+    
+     Hello : {!v.Message2}
+    <br />
+    <br />
+    <lightning:button label="Second Button" onclick="{!c.handleClick2}" />
+</aura:component>
+
+
+3. Demo Application :
+
+<aura:application extends="force:slds">
+    <c:secondAuraComponent/>
+</aura:application>
+
+4. SecondAuraComponentController  :
+
+({
+	handleClick : function(component, event, helper) {
+		//component.set("v.Message1", "Button Clicked1");
+		var btn = event.getSource();
+        var msg = btn.get("v.label");
+        component.set("v.Message1", msg);
+	},
+    handleClick2 : function(component, event, helper) {
+        //component.set("v.Message2", "Button Clicked2");
+        var msg = event.getSource().get("v.label");
+        component.set("v.Message2", msg);
+    }
+})
 
