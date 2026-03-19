@@ -50,3 +50,58 @@
     }
 })
 
+
+5. Unbounded Vs Bounded Expressions : 
+
+ChildData Component : 
+
+<aura:component >
+    <aura:attribute name="childVar" type="String" default="Initial Child" />
+    <br /><br />
+    Child Value: {!v.childVar}
+    <br />
+    <lightning:button label="Update Child var" onclick="{!c.updateChildVar}" />
+</aura:component>
+
+ChildData Controller : 
+
+({
+    updateChildVar : function(component, event, helper) {
+        component.set("v.childVar", "Updated the child Attribute");
+    }
+})
+
+ParentData Component : 
+
+<aura:component >
+    <aura:attribute name="parentVar" type="String" default="Parent Value" />
+    <br />
+	
+    <!-- For Unbounded Expressions -->
+    <!-- Passing initial value (one-time copy) -->
+    <!-- <c:ChildData childVar="{#v.parentVar}" /> -->
+    
+    <!-- For Bounded Expressions -->
+    <c:ChildData childVar="{!v.parentVar}" />
+    <br /><hr />
+
+    Parent Value: {!v.parentVar}
+    <br />
+    <lightning:button label="Update Parent var" onclick="{!c.updateParentVar}" />
+</aura:component>
+
+ParentData Controller : 
+
+({
+    updateParentVar : function(component, event, helper) {
+        component.set("v.parentVar", "Updated the Parent Attribute");
+    }
+})
+
+DemoApp2 : for execution Previews 
+
+({
+    updateParentVar : function(component, event, helper) {
+        component.set("v.parentVar", "Updated the Parent Attribute");
+    }
+})
