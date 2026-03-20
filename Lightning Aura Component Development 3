@@ -1,1 +1,55 @@
+Aura Component Apex Controller acts as a server-side controller for your Lightning component, enabling it to interact with Salesforce data and business logic via Apex methods. 
 
+Association: You associate an Apex class with your Aura component using the controller attribute in the <aura:component> tag, e.g., controller="MyApexController". 
+Method Requirements: Apex methods exposed to the component must be:
+Annotated with @AuraEnabled.
+Static, public, or global. 
+Calling Methods: In the component's JavaScript controller, use component.get("c.methodName") to get a reference to the server-side action, then use action.setParams() to pass parameters and action.setCallback() to handle the response. 
+Execution: Use $A.enqueueAction(action) to send the request to the server. The request is processed asynchronously, and the callback function is invoked upon response. 
+Error Handling: Check response.getState() in the callback to handle SUCCESS, ERROR, or INCOMPLETE states. Use response.getError() to retrieve error details. 
+Key Point: Avoid naming conflicts—do not use the same name for a JavaScript controller method and an Apex method, as this can cause the JavaScript method to be called instead of the Apex method, leading to hard-to-debug issues.
+
+1. Apex Class - AccountController 
+
+public class AccountController {
+	@AuraEnabled
+    public static List<Account> getAccounts () {
+        List<Account> accList = new List<Account>();
+        accList = [SELECT Id, Name FROM Account LIMIT 10];
+        return accList;
+    }
+}
+
+2. Lightning Component - AccountData
+
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller = "AccountController">
+    <aura:attribute name = "accList" type = "List" />
+    <aura:handler name = "init" value = "{!this}" action = "{!c.doInit}" />
+    <lightning:select name="select1" label="Select an Account" required="true">
+        <option value="null">None</option>
+        <aura:iteration items = "{!v.accList}" var = "item">
+            <option value="{!item.id}">{!item.Name}</option>
+        </aura:iteration>
+    </lightning:select>
+</aura:component>
+
+3. Lightning Component Controller - accountDataController
+
+({
+	doInit : function(component, event, helper) {
+		var action = component.get("c.getAccounts");
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if(state === "SUCCESS") {
+                component.set("v.accList", response.getReturnValue());
+            }
+        });
+        $A.enqueueAction(action);
+	}
+})
+
+4. Lightning Application - demo Application 
+
+<aura:application extends="force:slds">
+    <c:accountData/>
+</aura:application>
